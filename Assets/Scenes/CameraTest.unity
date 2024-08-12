@@ -433,6 +433,7 @@ GameObject:
   - component: {fileID: 1211997531}
   - component: {fileID: 1211997530}
   - component: {fileID: 1211997529}
+  - component: {fileID: 1211997533}
   m_Layer: 0
   m_Name: Wall (2)
   m_TagString: Untagged
@@ -518,6 +519,21 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: -18.988, z: 0}
+--- !u!114 &1211997533
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1211997528}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c7f35f608bc6194491a1b77e93466a2, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  info:
+    Type: 0
+    weight: 0.124
 --- !u!1 &1739167613
 GameObject:
   m_ObjectHideFlags: 0
