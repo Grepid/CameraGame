@@ -1,11 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using UnityEditor;
 using UnityEngine;
 
 public class HeldCam : MonoBehaviour
 {
     private string _PhotoCache;
+    public int PhotosInCache
+    {
+        get
+        {
+            return Directory.GetFiles(_PhotoCache).Length;
+        }
+    }
     public Photo LastPhoto;
 
     private void Awake()
@@ -23,59 +31,43 @@ public class HeldCam : MonoBehaviour
         {
             Directory.CreateDirectory(_PhotoCache);
         }
-        ScreenCapture.CaptureScreenshot(_PhotoCache+"test.png");
-        IOExtension.ClearAllFiles(Directory.GetParent(_PhotoCache));
-        print("Hello hehe :)");
     }
-
-    public void TakePhoto()
-    {
-        Photo p = new Photo();
-        ScreenCapture.CaptureScreenshot(_PhotoCache + "Photo.png");
-        p.photoPath = _PhotoCache+"Photo.png";
-        Collider[] colliders = GetObjectsInCameraView();
-        foreach (Collider col in colliders)
-        {
-            print(col.name);
-            PhotoTarget target = col.GetComponent<PhotoTarget>();
-            if(target != null)
-            {
-                p.targets.Add(target.info);
-            }
-        }
-        LastPhoto = p;
-    }
-
-    public void TakePhoto2()
-    {
-        Photo p = new Photo();
-        ScreenCapture.CaptureScreenshot(_PhotoCache + "Photo.png");
-        p.photoPath = _PhotoCache + "Photo.png";
-        List<GameObject> InView = GetObjectsInView();
-        foreach (GameObject go in InView)
-        {
-            print(go.name);
-            PhotoTarget target = go.GetComponent<PhotoTarget>();
-            if (target != null)
-            {
-                p.targets.Add(target.info);
-            }
-        }
-        LastPhoto = p;
-    }
-
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.E))
         {
-            TakePhoto2();
+            TakePhoto();
         }
         if (Input.GetKeyDown(KeyCode.F))
         {
             GiveInfo(LastPhoto);
         }
     }
+
+    public void TakePhoto()
+    {
+        Photo p = new Photo();
+        string photoName = _PhotoCache + "Photo" + (PhotosInCache + 1) + ".png";
+        ScreenCapture.CaptureScreenshot(photoName);
+        p.photoPath = photoName;
+        List<GameObject> InView = GetObjectsInView();
+        foreach (GameObject go in InView)
+        {
+            PhotoTarget target = go.GetComponent<PhotoTarget>();
+            if (target != null)
+            {
+                if (IsObscured(target.gameObject))
+                {
+                    print(target.info.Type + " was obscured");
+                    continue;
+                }
+                p.targets.Add(target.info);
+            }
+        }
+        LastPhoto = p;
+    }
+
     public void GiveInfo(Photo photo)
     {
         if (LastPhoto == null) return;
@@ -86,24 +78,6 @@ public class HeldCam : MonoBehaviour
     }
     public Camera cam;
     public float maxDistance = 100f; // Max distance for detection
-
-
-    Collider[] GetObjectsInCameraView()
-    {
-        Plane[] planes = GeometryUtility.CalculateFrustumPlanes(cam);
-        Bounds bounds = new Bounds();
-
-        foreach (var plane in planes)
-        {
-            bounds.Encapsulate(plane.ClosestPointOnPlane(Vector3.zero));
-            
-        }
-
-        Vector3 center = cam.transform.position + cam.transform.forward * maxDistance / 2;
-        Vector3 size = new Vector3(bounds.size.x, bounds.size.y, maxDistance);
-
-        return Physics.OverlapBox(center, size / 2, cam.transform.rotation);
-    }
 
     List<GameObject> GetObjectsInView()
     {
@@ -123,5 +97,15 @@ public class HeldCam : MonoBehaviour
         }
 
         return objectsInView;
+    }
+
+    private bool IsObscured(GameObject go)
+    {
+        Vector3 direction = go.transform.position - cam.transform.position;
+        if(Physics.Raycast(cam.transform.position, direction.normalized, out RaycastHit hit))
+        {
+            if (hit.collider.gameObject == go) return false;
+        }
+        return true;
     }
 }

@@ -56,7 +56,7 @@ public class PlayerController : MonoBehaviour
     private void Update()
     {
         AssignConstantVariables();
-        LookUpdate();
+        //LookUpdate();
         InputCheck();
         MovePlayer();
     }
@@ -72,7 +72,7 @@ public class PlayerController : MonoBehaviour
 
     private void FixedUpdate()
     {
-        
+        LookUpdate();
     }
 
     private void MovePlayer()
@@ -86,8 +86,8 @@ public class PlayerController : MonoBehaviour
 
     private void LookUpdate()
     {
-        lookXY.x -= lookDelta.y * xSens * Time.deltaTime;
-        lookXY.y += lookDelta.x * ySens * Time.deltaTime;
+        lookXY.x -= (lookDelta.y * xSens) * Time.deltaTime;
+        lookXY.y += (lookDelta.x * ySens) * Time.deltaTime;
         lookXY.x = Mathf.Clamp(lookXY.x, -90f, 90f);
         transform.rotation = Quaternion.Euler(0, lookXY.y, 0);
         cam.transform.localRotation = Quaternion.Euler(lookXY.x, 0, 0);
