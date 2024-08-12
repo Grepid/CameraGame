@@ -57,12 +57,13 @@ public class HeldCam : MonoBehaviour
             PhotoTarget target = go.GetComponent<PhotoTarget>();
             if (target != null)
             {
-                if (IsObscured(target.gameObject))
+                float amountVisible = ObscureCheck(target);
+                if (amountVisible == 0)
                 {
                     print(target.info.Type + " was obscured");
                     continue;
                 }
-                p.targets.Add(target.info);
+                p.targets.Add(target);
             }
         }
         LastPhoto = p;
@@ -73,7 +74,7 @@ public class HeldCam : MonoBehaviour
         if (LastPhoto == null) return;
         foreach(var info in photo.targets)
         {
-            print(info.Type + " " + info.weight);
+            print(info.info.Type + " " + info.info.weight);
         }
     }
     public Camera cam;
@@ -107,5 +108,28 @@ public class HeldCam : MonoBehaviour
             if (hit.collider.gameObject == go) return false;
         }
         return true;
+    }
+
+    private float ObscureCheck(PhotoTarget target)
+    {
+        int visibleCount = 0;
+        foreach(Transform t in target.capturePoints)
+        {
+            Vector3 direction = t.position - cam.transform.position;
+            if(Physics.Raycast(cam.transform.position, direction.normalized, out RaycastHit hit))
+            {
+                if(hit.collider.gameObject == target.gameObject) visibleCount++;
+            }
+        }
+        if(target.capturePoints.Count == 0)
+        {
+            Vector3 direction = target.gameObject.transform.position - cam.transform.position;
+            if (Physics.Raycast(cam.transform.position, direction.normalized, out RaycastHit hit))
+            {
+                if (hit.collider.gameObject == target.gameObject) return 1;
+            }
+            return 0;
+        }
+        return (float)visibleCount / target.capturePoints.Count;    
     }
 }

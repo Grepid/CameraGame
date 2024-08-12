@@ -7,5 +7,5 @@ using UnityEngine;
 public class Photo
 {
     public string photoPath;
-    public List<PhotoTargetInfo> targets = new List<PhotoTargetInfo>();
+    public List<PhotoTarget> targets = new List<PhotoTarget>();
 }
