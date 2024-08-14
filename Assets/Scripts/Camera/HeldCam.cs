@@ -6,19 +6,19 @@ using UnityEngine;
 
 public class HeldCam : MonoBehaviour
 {
-    private string _PhotoCache;
+    FileManager fm => FileManager.instance;
     public int PhotosInCache
     {
         get
         {
-            return Directory.GetFiles(_PhotoCache).Length;
+            return Directory.GetFiles(fm.PhotoCachePath).Length;
         }
     }
     public Photo LastPhoto;
 
     private void Awake()
     {
-        _PhotoCache = Application.persistentDataPath + "/PhotoCache/";
+        
     }
     // Start is called before the first frame update
     void Start()
@@ -26,10 +26,6 @@ public class HeldCam : MonoBehaviour
         if (cam == null)
         {
             cam = Camera.main;
-        }
-        if (!Directory.Exists(_PhotoCache))
-        {
-            Directory.CreateDirectory(_PhotoCache);
         }
     }
     // Update is called once per frame
@@ -48,7 +44,7 @@ public class HeldCam : MonoBehaviour
     public void TakePhoto()
     {
         Photo p = new Photo();
-        string photoName = _PhotoCache + "Photo" + (PhotosInCache + 1) + ".png";
+        string photoName = fm.PhotoCachePath + "Photo" + (PhotosInCache + 1) + ".png";
         ScreenCapture.CaptureScreenshot(photoName);
         p.photoPath = photoName;
         List<GameObject> InView = GetObjectsInView();
@@ -100,16 +96,6 @@ public class HeldCam : MonoBehaviour
         return objectsInView;
     }
 
-    private bool IsObscured(GameObject go)
-    {
-        Vector3 direction = go.transform.position - cam.transform.position;
-        if(Physics.Raycast(cam.transform.position, direction.normalized, out RaycastHit hit))
-        {
-            if (hit.collider.gameObject == go) return false;
-        }
-        return true;
-    }
-
     private float ObscureCheck(PhotoTarget target)
     {
         int visibleCount = 0;
@@ -121,6 +107,8 @@ public class HeldCam : MonoBehaviour
                 if(hit.collider.gameObject == target.gameObject) visibleCount++;
             }
         }
+
+        //Casts ray to 
         if(target.capturePoints.Count == 0)
         {
             Vector3 direction = target.gameObject.transform.position - cam.transform.position;
