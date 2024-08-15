@@ -109,7 +109,7 @@ public class HeldCam : MonoBehaviour
         }
 
         //Casts ray to 
-        if(target.capturePoints.Count == 0)
+        /*if(target.capturePoints.Count == 0)
         {
             Vector3 direction = target.gameObject.transform.position - cam.transform.position;
             if (Physics.Raycast(cam.transform.position, direction.normalized, out RaycastHit hit))
@@ -117,7 +117,66 @@ public class HeldCam : MonoBehaviour
                 if (hit.collider.gameObject == target.gameObject) return 1;
             }
             return 0;
+        }*/
+
+
+        if (target.capturePoints.Count == 0)
+        {
+            Vector3 direction = target.gameObject.transform.position - cam.transform.position;
+
+            List<RaycastHit> Hits = new List<RaycastHit>();
+            Collider col = target.GetComponent<Collider>();
+
+            List<Vector3> pointsOnCollider = new List<Vector3>();
+
+            print(col.bounds.extents);
+
+            void AddPointOnCollider(Vector3 extents)
+            {
+                //pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + (col.transform.right * extents.x)));
+                //pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + (col.transform.up*extents.y)));
+                //pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + (col.transform.forward*extents.z)));
+
+                pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + (col.transform.right * extents.x)));
+                pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + ((col.transform.right + col.transform.forward) * (extents.x + extents.z))));
+
+
+                pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + (col.transform.up*extents.y)));
+                pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + (col.transform.forward*extents.z)));
+            }
+
+            AddPointOnCollider(col.bounds.extents);
+            AddPointOnCollider(-col.bounds.extents);
+
+            foreach (Vector3 v3 in pointsOnCollider)
+            {
+                GameObject go = new GameObject();
+                go.transform.position = v3;
+            }
+
+            int pointsInView = 0;
+            foreach(Vector3 point in pointsOnCollider)
+            {
+                if(Physics.Raycast(cam.transform.position,point-cam.transform.position,out RaycastHit hitInfo))
+                {
+                    if(hitInfo.collider.gameObject == target.gameObject)
+                    {
+                        pointsInView++;
+                    }
+                }
+            }
+            print(pointsInView);
+
+            if (Physics.Raycast(cam.transform.position, direction.normalized, out RaycastHit hit))
+            {
+                if (hit.collider.gameObject == target.gameObject) return 1;
+            }
+
+
+            return 0;
         }
+
+
         return (float)visibleCount / target.capturePoints.Count;    
     }
 }

@@ -24,9 +24,9 @@ public class FileManager : MonoBehaviour
             Destroy(gameObject);
         }
         PPath = Application.persistentDataPath;
-        PhotoCachePath = PPath + "/Saves" + "/PhotoCache";
-        SavedPhotosPath = PPath + "/Saves" + "/SavedPhotos";
-        SaveDataPath = PPath + "/Saves" + "/SaveData";
+        PhotoCachePath = PPath + "/Saves" + "/PhotoCache/";
+        SavedPhotosPath = PPath + "/Saves" + "/SavedPhotos/";
+        SaveDataPath = PPath + "/Saves" + "/SaveData/";
         TryAccessDirectories();
     }
     private void TryAccessDirectories()
