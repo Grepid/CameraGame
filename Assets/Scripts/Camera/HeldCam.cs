@@ -122,6 +122,14 @@ public class HeldCam : MonoBehaviour
 
         if (target.capturePoints.Count == 0)
         {
+            GameObject parent = new GameObject("Parent");
+            for(int i = 0; i < 27; i++)
+            {
+                GameObject go = new GameObject("Marker");
+                go.transform.SetParent(parent.transform);
+            }
+
+
             Vector3 direction = target.gameObject.transform.position - cam.transform.position;
 
             List<RaycastHit> Hits = new List<RaycastHit>();
@@ -143,14 +151,12 @@ public class HeldCam : MonoBehaviour
                 //localisedPoint.y = (col.gameObject.transform.up * extents.y).y;
                 //localisedPoint.z = (col.gameObject.transform.forward * extents.z).z;
 
-                print(localisedPoint.x);
                 localisedPoint.x = (col.gameObject.transform.right * extents.x).x;
-                print(localisedPoint.x);
                 localisedPoint.y = (col.gameObject.transform.up * extents.y).y;
                 localisedPoint.z = (col.gameObject.transform.forward * extents.z).z;
 
                 //pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + localisedPoint));
-                pointsOnCollider.Add(col.bounds.center + localisedPoint);
+                pointsOnCollider.Add(extents);
                 //pointsOnCollider.Add(col.bounds.center + extents);
 
             }
@@ -188,11 +194,20 @@ public class HeldCam : MonoBehaviour
             //AddPointOnCollider(col.bounds.extents);
             //AddPointOnCollider(-col.bounds.extents);
 
-            foreach (Vector3 v3 in pointsOnCollider)
+            /*foreach (Vector3 v3 in pointsOnCollider)
             {
                 GameObject go = new GameObject();
                 go.transform.position = v3;
+            }*/
+
+            parent.transform.position = col.bounds.center;
+            int w = 0;
+            foreach(Transform t in parent.transform)
+            {
+                t.localPosition = pointsOnCollider[w];
+                w++;
             }
+            parent.transform.eulerAngles = Vector3.RotateTowards(parent.transform.eulerAngles, col.transform.eulerAngles, 999, 999);
 
             int pointsInView = 0;
             foreach(Vector3 point in pointsOnCollider)
