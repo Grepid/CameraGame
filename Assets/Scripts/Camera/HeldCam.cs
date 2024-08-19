@@ -136,17 +136,57 @@ public class HeldCam : MonoBehaviour
                 //pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + (col.transform.right * extents.x)));
                 //pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + (col.transform.up*extents.y)));
                 //pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + (col.transform.forward*extents.z)));
+                
+                Vector3 localisedPoint = extents;
 
-                pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + (col.transform.right * extents.x)));
-                pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + ((col.transform.right + col.transform.forward) * (extents.x + extents.z))));
+                //localisedPoint.x = (col.gameObject.transform.right * extents.x).x;
+                //localisedPoint.y = (col.gameObject.transform.up * extents.y).y;
+                //localisedPoint.z = (col.gameObject.transform.forward * extents.z).z;
 
+                print(localisedPoint.x);
+                localisedPoint.x = (col.gameObject.transform.right * extents.x).x;
+                print(localisedPoint.x);
+                localisedPoint.y = (col.gameObject.transform.up * extents.y).y;
+                localisedPoint.z = (col.gameObject.transform.forward * extents.z).z;
 
-                pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + (col.transform.up*extents.y)));
-                pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + (col.transform.forward*extents.z)));
+                //pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + localisedPoint));
+                pointsOnCollider.Add(col.bounds.center + localisedPoint);
+                //pointsOnCollider.Add(col.bounds.center + extents);
+
             }
 
-            AddPointOnCollider(col.bounds.extents);
-            AddPointOnCollider(-col.bounds.extents);
+            Vector3 ext = col.bounds.extents;
+            Vector3 currentPoint = col.bounds.extents;
+
+            int m1 = 1;
+            int m2 = 1;
+            int m3 = 1;
+            for (int x = 0; x < 3; x++)
+            {
+                currentPoint = new Vector3(ext.x*m1, currentPoint.y, currentPoint.z);
+                if (x == 0) m1 = 0;
+                if (x == 1) m1 = -1;
+                if (x == 2) m1 = 1;
+                for(int y = 0; y < 3; y++)
+                {
+                    currentPoint = new Vector3(currentPoint.x, ext.y * m2, currentPoint.z);
+                    if (y == 0) m2 = 0;
+                    if (y == 1) m2 = -1;
+                    if (y == 2) m2 = 1;
+                    for (int z = 0; z < 3; z++)
+                    {
+                        currentPoint = new Vector3(currentPoint.x, currentPoint.y, ext.z * m3);
+                        AddPointOnCollider(currentPoint);
+                        if(z == 0) m3 = 0;
+                        if (z == 1) m3 = -1;
+                        if(z == 2) m3 = 1;
+                    }
+                }
+            }
+
+
+            //AddPointOnCollider(col.bounds.extents);
+            //AddPointOnCollider(-col.bounds.extents);
 
             foreach (Vector3 v3 in pointsOnCollider)
             {
