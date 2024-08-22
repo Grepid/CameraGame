@@ -4,10 +4,13 @@ using System.IO;
 using System.Linq;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public class HeldCam : MonoBehaviour
 {
     FileManager fm => FileManager.instance;
+    GameObject obscureMatrix;
+
     public int PhotosInCache
     {
         get
@@ -28,15 +31,23 @@ public class HeldCam : MonoBehaviour
         {
             cam = Camera.main;
         }
+        // Create the "Parent" transform of points
+        obscureMatrix = new GameObject("obscureMatrix");
+        for(int i = 0; i<27; i++)
+        {
+            GameObject go = new GameObject("matrixPoint" + i);
+            go.transform.parent = obscureMatrix.transform;
+        }
+
     }
     // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        if (Input.GetMouseButtonDown(0))
         {
             TakePhoto();
         }
-        if (Input.GetKeyDown(KeyCode.F))
+        if (Input.GetKeyDown(KeyCode.X))
         {
             GiveInfo(LastPhoto);
         }
@@ -102,32 +113,10 @@ public class HeldCam : MonoBehaviour
 
     private float ObscureCheck(PhotoTarget target)
     {
-        GameObject parent = new GameObject("Parent");
-        for(int i = 0; i < 27; i++)
-        {
-            GameObject go = new GameObject("Marker");
-            go.transform.SetParent(parent.transform);
-        }
-
-
-        Vector3 direction = target.gameObject.transform.position - cam.transform.position;
-
-        List<RaycastHit> Hits = new List<RaycastHit>();
         Collider col = target.GetComponent<Collider>();
         Collider col2 = Instantiate(col.gameObject,col.gameObject.transform.position,Quaternion.Euler(Vector3.zero)).GetComponent<Collider>();
             
         List<Vector3> pointsOnCollider = new List<Vector3>();
-
-        void AddPointOnCollider(Vector3 extents)
-        {                
-            Vector3 localisedPoint = extents;
-
-            localisedPoint.x = (col.gameObject.transform.right * extents.x).x;
-            localisedPoint.y = (col.gameObject.transform.up * extents.y).y;
-            localisedPoint.z = (col.gameObject.transform.forward * extents.z).z;
-
-            pointsOnCollider.Add(extents);
-        }
 
         Vector3 ext = col2.bounds.extents;
         Vector3 currentPoint = col2.bounds.extents;
@@ -152,7 +141,7 @@ public class HeldCam : MonoBehaviour
                 for (int z = 0; z < 3; z++)
                 {
                     currentPoint = new Vector3(currentPoint.x, currentPoint.y, ext.z * m3);
-                    AddPointOnCollider(currentPoint);
+                    pointsOnCollider.Add(currentPoint);
                     if(z == 0) m3 = 0;
                     if (z == 1) m3 = -1;
                     if(z == 2) m3 = 1;
@@ -160,22 +149,22 @@ public class HeldCam : MonoBehaviour
             }
         }
 
-        parent.transform.position = col.bounds.center;
+        obscureMatrix.transform.position = col.bounds.center;
         int w = 0;
-        foreach(Transform t in parent.transform)
+        foreach(Transform t in obscureMatrix.transform)
         {
             t.localPosition = pointsOnCollider[w];
             w++;
         }
-        parent.transform.eulerAngles = Vector3.RotateTowards(parent.transform.eulerAngles, col.transform.eulerAngles, 999, 999);
-        foreach(Transform t in parent.transform)
+        obscureMatrix.transform.eulerAngles = Vector3.RotateTowards(obscureMatrix.transform.eulerAngles, col.transform.eulerAngles, 999, 999);
+        foreach(Transform t in obscureMatrix.transform)
         {
             t.position = col.ClosestPoint(t.position);
             //t.position = Vector3.MoveTowards(t.position, col.bounds.center, 0.1f);
         }
 
         int pointsInView = 0;
-        foreach(Transform point in parent.transform)
+        foreach(Transform point in obscureMatrix.transform)
         {
             Ray ray = new Ray(cam.transform.position, point.position - cam.transform.position);
             //Debug.DrawRay(ray.origin, ray.direction*10, Color.red, 5f);

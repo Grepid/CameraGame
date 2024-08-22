@@ -28,13 +28,13 @@ public class PlayerController : MonoBehaviour
 
     // Player Jumping
     private bool isOnGround;
-    [SerializeField]private float jumpVelocity;
-    [SerializeField] private float maxSpeed;
+    [SerializeField] private float jumpVelocity;
+    [SerializeField] private float gravity;
 
     private void Awake()
     {
         cam = Camera.main;
-        //lookXY = new Vector2(cam.transform.eulerAngles.x, transform.eulerAngles.y);
+        lookXY = new Vector2(cam.transform.eulerAngles.x, transform.eulerAngles.y);
     }
 
     private void Start()
@@ -43,20 +43,20 @@ public class PlayerController : MonoBehaviour
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
         //Physics.gravity = new Vector3(0, -gravity, 0);
-        
+
     }
 
     private void Initialise()
     {
-        
+
         rb = GetComponent<Rigidbody>();
-        
+
     }
 
     private void Update()
     {
         AssignConstantVariables();
-        //LookUpdate();
+        LookUpdate();
         InputCheck();
         MovePlayer();
     }
@@ -66,31 +66,29 @@ public class PlayerController : MonoBehaviour
     {
         //lookDelta = (Vector2)Input.mousePosition - oldLookPos;
         lookDelta = new Vector2(Input.GetAxis("Mouse X"), Input.GetAxis("Mouse Y"));
-        moveDirection = new Vector2(Input.GetAxis("Horizontal") ,Input.GetAxis("Vertical"));
+        moveDirection = new Vector2(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"));
         //oldLookPos = Input.mousePosition;
     }
 
     private void FixedUpdate()
     {
-        LookUpdate();
+
     }
 
     private void MovePlayer()
     {
         Vector3 direction = transform.forward * moveDirection.y + transform.right * moveDirection.x;
-        Vector3 movement = new Vector3(direction.normalized.x * moveSpeed * Time.deltaTime, rb.velocity.y, direction.normalized.z * moveSpeed * Time.deltaTime);
-        rb.AddForce(movement);
-        if(rb.velocity.magnitude > maxSpeed) rb.velocity = rb.velocity.normalized * maxSpeed;
+        rb.velocity = new Vector3(direction.normalized.x * moveSpeed * Time.smoothDeltaTime, rb.velocity.y, direction.normalized.z * moveSpeed * Time.smoothDeltaTime);
         //rb.AddForce(direction.normalized * moveSpeed, ForceMode.Force);
     }
 
     private void LookUpdate()
     {
-        lookXY.x -= (lookDelta.y * xSens) * Time.deltaTime;
-        lookXY.y += (lookDelta.x * ySens) * Time.deltaTime;
+        lookXY.x -= lookDelta.y * xSens * Time.smoothDeltaTime;
+        lookXY.y += lookDelta.x * ySens * Time.smoothDeltaTime;
         lookXY.x = Mathf.Clamp(lookXY.x, -90f, 90f);
         transform.rotation = Quaternion.Euler(0, lookXY.y, 0);
-        cam.transform.localRotation = Quaternion.Euler(lookXY.x, 0, 0);
+        cam.transform.rotation = Quaternion.Euler(lookXY.x, lookXY.y, 0);
     }
 
     private void OnCollisionEnter(Collision collision)
@@ -105,7 +103,7 @@ public class PlayerController : MonoBehaviour
     private void InputCheck()
     {
         if (Input.GetKeyDown(KeyCode.Space)) OnJump();
-        if(Input.GetKeyDown(KeyCode.E)) Interact();
+        if (Input.GetKeyDown(KeyCode.E)) Interact();
     }
     private void OnJump()
     {
@@ -117,7 +115,7 @@ public class PlayerController : MonoBehaviour
     private void Interact()
     {
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
-        Physics.Raycast(ray,out RaycastHit hit);
+        Physics.Raycast(ray, out RaycastHit hit);
         if (hit.collider == null) return;
         Iinteractable interact = hit.collider.GetComponent<Iinteractable>();
         if (interact == null) return;
