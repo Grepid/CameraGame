@@ -561,7 +561,6 @@ MonoBehaviour:
   info:
     Type: 2
     weight: 0.711
-  capturePoints: []
 --- !u!65 &856109472
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -673,9 +672,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   info:
-    Type: 2
+    Type: 1
     weight: 0.711
-  capturePoints: []
 --- !u!65 &1128553754
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -871,7 +869,6 @@ MonoBehaviour:
   info:
     Type: 0
     weight: 0.124
-  capturePoints: []
 --- !u!1 &1395046016
 GameObject:
   m_ObjectHideFlags: 0
@@ -1101,7 +1098,6 @@ MonoBehaviour:
   info:
     Type: 4
     weight: 0.866
-  capturePoints: []
 --- !u!65 &1654536996
 BoxCollider:
   m_ObjectHideFlags: 0

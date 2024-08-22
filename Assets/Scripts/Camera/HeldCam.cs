@@ -98,109 +98,95 @@ public class HeldCam : MonoBehaviour
 
     private float ObscureCheck(PhotoTarget target)
     {
-        int visibleCount = 0;
-
-
-        if (target.capturePoints.Count == 0)
+        GameObject parent = new GameObject("Parent");
+        for(int i = 0; i < 27; i++)
         {
-            GameObject parent = new GameObject("Parent");
-            for(int i = 0; i < 27; i++)
-            {
-                GameObject go = new GameObject("Marker");
-                go.transform.SetParent(parent.transform);
-            }
-
-
-            Vector3 direction = target.gameObject.transform.position - cam.transform.position;
-
-            List<RaycastHit> Hits = new List<RaycastHit>();
-            Collider col = target.GetComponent<Collider>();
-            Collider col2 = Instantiate(col.gameObject,col.gameObject.transform.position,Quaternion.Euler(Vector3.zero)).GetComponent<Collider>();
-            
-            List<Vector3> pointsOnCollider = new List<Vector3>();
-
-            void AddPointOnCollider(Vector3 extents)
-            {                
-                Vector3 localisedPoint = extents;
-
-                localisedPoint.x = (col.gameObject.transform.right * extents.x).x;
-                localisedPoint.y = (col.gameObject.transform.up * extents.y).y;
-                localisedPoint.z = (col.gameObject.transform.forward * extents.z).z;
-
-                pointsOnCollider.Add(extents);
-            }
-
-            Vector3 ext = col2.bounds.extents;
-            Vector3 currentPoint = col2.bounds.extents;
-            col2.enabled = false;
-            Destroy(col2.gameObject);
-
-            int m1 = 1;
-            int m2 = 1;
-            int m3 = 1;
-            for (int x = 0; x < 3; x++)
-            {
-                currentPoint = new Vector3(ext.x*m1, currentPoint.y, currentPoint.z);
-                if (x == 0) m1 = 0;
-                if (x == 1) m1 = -1;
-                if (x == 2) m1 = 1;
-                for(int y = 0; y < 3; y++)
-                {
-                    currentPoint = new Vector3(currentPoint.x, ext.y * m2, currentPoint.z);
-                    if (y == 0) m2 = 0;
-                    if (y == 1) m2 = -1;
-                    if (y == 2) m2 = 1;
-                    for (int z = 0; z < 3; z++)
-                    {
-                        currentPoint = new Vector3(currentPoint.x, currentPoint.y, ext.z * m3);
-                        AddPointOnCollider(currentPoint);
-                        if(z == 0) m3 = 0;
-                        if (z == 1) m3 = -1;
-                        if(z == 2) m3 = 1;
-                    }
-                }
-            }
-
-            parent.transform.position = col.bounds.center;
-            int w = 0;
-            foreach(Transform t in parent.transform)
-            {
-                t.localPosition = pointsOnCollider[w];
-                w++;
-            }
-            parent.transform.eulerAngles = Vector3.RotateTowards(parent.transform.eulerAngles, col.transform.eulerAngles, 999, 999);
-            foreach(Transform t in parent.transform)
-            {
-                t.position = col.ClosestPoint(t.position);
-                //t.position = Vector3.MoveTowards(t.position, col.bounds.center, 0.1f);
-            }
-
-            int pointsInView = 0;
-            foreach(Transform point in parent.transform)
-            {
-                Ray ray = new Ray(cam.transform.position, point.position - cam.transform.position);
-                Debug.DrawRay(ray.origin, ray.direction*10, Color.red, 5f);
-                if(Physics.Raycast(ray,out RaycastHit hitInfo))
-                {
-                    print(hitInfo.collider.gameObject.name);
-                    if(hitInfo.collider.gameObject == target.gameObject)
-                    {
-                        pointsInView++;
-                    }
-                }
-            }
-            print(pointsInView);
-
-            if (Physics.Raycast(cam.transform.position, direction.normalized, out RaycastHit hit))
-            {
-                if (hit.collider.gameObject == target.gameObject) return 1;
-            }
-
-
-            return 0;
+            GameObject go = new GameObject("Marker");
+            go.transform.SetParent(parent.transform);
         }
 
 
-        return (float)visibleCount / target.capturePoints.Count;    
+        Vector3 direction = target.gameObject.transform.position - cam.transform.position;
+
+        List<RaycastHit> Hits = new List<RaycastHit>();
+        Collider col = target.GetComponent<Collider>();
+        Collider col2 = Instantiate(col.gameObject,col.gameObject.transform.position,Quaternion.Euler(Vector3.zero)).GetComponent<Collider>();
+            
+        List<Vector3> pointsOnCollider = new List<Vector3>();
+
+        void AddPointOnCollider(Vector3 extents)
+        {                
+            Vector3 localisedPoint = extents;
+
+            localisedPoint.x = (col.gameObject.transform.right * extents.x).x;
+            localisedPoint.y = (col.gameObject.transform.up * extents.y).y;
+            localisedPoint.z = (col.gameObject.transform.forward * extents.z).z;
+
+            pointsOnCollider.Add(extents);
+        }
+
+        Vector3 ext = col2.bounds.extents;
+        Vector3 currentPoint = col2.bounds.extents;
+        col2.enabled = false;
+        Destroy(col2.gameObject);
+
+        int m1 = 1;
+        int m2 = 1;
+        int m3 = 1;
+        for (int x = 0; x < 3; x++)
+        {
+            currentPoint = new Vector3(ext.x*m1, currentPoint.y, currentPoint.z);
+            if (x == 0) m1 = 0;
+            if (x == 1) m1 = -1;
+            if (x == 2) m1 = 1;
+            for(int y = 0; y < 3; y++)
+            {
+                currentPoint = new Vector3(currentPoint.x, ext.y * m2, currentPoint.z);
+                if (y == 0) m2 = 0;
+                if (y == 1) m2 = -1;
+                if (y == 2) m2 = 1;
+                for (int z = 0; z < 3; z++)
+                {
+                    currentPoint = new Vector3(currentPoint.x, currentPoint.y, ext.z * m3);
+                    AddPointOnCollider(currentPoint);
+                    if(z == 0) m3 = 0;
+                    if (z == 1) m3 = -1;
+                    if(z == 2) m3 = 1;
+                }
+            }
+        }
+
+        parent.transform.position = col.bounds.center;
+        int w = 0;
+        foreach(Transform t in parent.transform)
+        {
+            t.localPosition = pointsOnCollider[w];
+            w++;
+        }
+        parent.transform.eulerAngles = Vector3.RotateTowards(parent.transform.eulerAngles, col.transform.eulerAngles, 999, 999);
+        foreach(Transform t in parent.transform)
+        {
+            t.position = col.ClosestPoint(t.position);
+            //t.position = Vector3.MoveTowards(t.position, col.bounds.center, 0.1f);
+        }
+
+        int pointsInView = 0;
+        foreach(Transform point in parent.transform)
+        {
+            Ray ray = new Ray(cam.transform.position, point.position - cam.transform.position);
+            //Debug.DrawRay(ray.origin, ray.direction*10, Color.red, 5f);
+            if(Physics.Raycast(ray,out RaycastHit hitInfo))
+            {
+                //print(hitInfo.collider.gameObject.name);
+                if(hitInfo.collider.gameObject == target.gameObject)
+                {
+                    pointsInView++;
+                }
+            }
+        }
+        print(pointsInView);
+
+
+        return (float)pointsInView / 27f;    
     }
 }
