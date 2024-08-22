@@ -134,10 +134,11 @@ public class HeldCam : MonoBehaviour
 
             List<RaycastHit> Hits = new List<RaycastHit>();
             Collider col = target.GetComponent<Collider>();
-
+            Collider col2 = Instantiate(col.gameObject,col.gameObject.transform.position,Quaternion.Euler(Vector3.zero)).GetComponent<Collider>();
+            //col2.gameObject.transform.eulerAngles = Vector3.zero;
+            //col2.gameObject.transform.rotation = Quaternion.Euler(Vector3.zero);
+            
             List<Vector3> pointsOnCollider = new List<Vector3>();
-
-            print(col.bounds.extents);
 
             void AddPointOnCollider(Vector3 extents)
             {
@@ -157,12 +158,14 @@ public class HeldCam : MonoBehaviour
 
                 //pointsOnCollider.Add(col.ClosestPoint(col.bounds.center + localisedPoint));
                 pointsOnCollider.Add(extents);
-                //pointsOnCollider.Add(col.bounds.center + extents);
+                //pointsOnCollider.Add(col.ClosestPoint(extents));
 
             }
 
-            Vector3 ext = col.bounds.extents;
-            Vector3 currentPoint = col.bounds.extents;
+            Vector3 ext = col2.bounds.extents;
+            Vector3 currentPoint = col2.bounds.extents;
+
+            Destroy(col2.gameObject);
 
             int m1 = 1;
             int m2 = 1;
@@ -208,6 +211,10 @@ public class HeldCam : MonoBehaviour
                 w++;
             }
             parent.transform.eulerAngles = Vector3.RotateTowards(parent.transform.eulerAngles, col.transform.eulerAngles, 999, 999);
+            foreach(Transform t in parent.transform)
+            {
+                t.position = col.ClosestPoint(t.position);
+            }
 
             int pointsInView = 0;
             foreach(Vector3 point in pointsOnCollider)
