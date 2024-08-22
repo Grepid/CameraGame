@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -60,6 +61,8 @@ public class HeldCam : MonoBehaviour
                     continue;
                 }
                 p.targets.Add(target);
+
+                p.positionOnScreen.Add(target, cam.WorldToScreenPoint(target.gameObject.transform.position));
             }
         }
         LastPhoto = p;
@@ -71,6 +74,7 @@ public class HeldCam : MonoBehaviour
         foreach(var info in photo.targets)
         {
             print(info.info.Type + " " + info.info.weight);
+            print(photo.positionOnScreen[info]);
         }
     }
     public Camera cam;
