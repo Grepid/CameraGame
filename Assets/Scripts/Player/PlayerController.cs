@@ -52,13 +52,18 @@ public class PlayerController : MonoBehaviour
         rb = GetComponent<Rigidbody>();
 
     }
-
+    bool downwardsPressure = true;
     private void Update()
     {
         AssignConstantVariables();
         LookUpdate();
         InputCheck();
         MovePlayer();
+        //if (rb.velocity.y < 0.1f && rb.velocity.y > -0.1f) isOnGround = true;
+        if (downwardsPressure)
+        {
+            rb.AddForce(Vector3.down * 100);
+        }
     }
 
     private Vector2 oldLookPos = Vector2.zero;
@@ -78,7 +83,7 @@ public class PlayerController : MonoBehaviour
     private void MovePlayer()
     {
         Vector3 direction = transform.forward * moveDirection.y + transform.right * moveDirection.x;
-        rb.velocity = new Vector3(direction.normalized.x * moveSpeed * Time.smoothDeltaTime, rb.velocity.y, direction.normalized.z * moveSpeed * Time.smoothDeltaTime);
+        rb.velocity = new Vector3(direction.normalized.x * moveSpeed * Time.deltaTime, rb.velocity.y, direction.normalized.z * moveSpeed * Time.deltaTime);
         //rb.AddForce(direction.normalized * moveSpeed, ForceMode.Force);
     }
 
@@ -103,12 +108,21 @@ public class PlayerController : MonoBehaviour
     private void InputCheck()
     {
         if (Input.GetKeyDown(KeyCode.Space)) OnJump();
+        if(Input.GetKeyUp(KeyCode.Space)) ReleaseJump();
         if (Input.GetKeyDown(KeyCode.E)) Interact();
     }
+
+    void ReleaseJump()
+    {
+        downwardsPressure = true;
+    }
+
     private void OnJump()
     {
+        print(isOnGround);
         if (isOnGround)
         {
+            downwardsPressure = false;
             rb.AddForce(0, jumpVelocity, 0);
         }
     }
