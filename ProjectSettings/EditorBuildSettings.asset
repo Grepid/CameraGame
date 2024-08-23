@@ -8,4 +8,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/CameraTest.unity
     guid: 2d27a195f0b605c499c3ad1b4d7e8df0
+  - enabled: 1
+    path: Assets/Scenes/MapTest.unity
+    guid: cfe0bfa31d9cce44983f6a5a84365d2d
   m_configObjects: {}
