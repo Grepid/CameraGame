@@ -1,3 +1,4 @@
+using AudioSystem;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
@@ -19,6 +20,8 @@ public class HeldCam : MonoBehaviour
         }
     }
     public Photo LastPhoto;
+
+    public int PhotosLeft;
 
     private void Awake()
     {
@@ -51,10 +54,18 @@ public class HeldCam : MonoBehaviour
         {
             GiveInfo(LastPhoto);
         }
+        if (Input.GetKeyDown(KeyCode.K))
+        {
+            foreach(PhotoTarget t in PhotoTarget.targetsInScene)
+            {
+                print("A " + t.info.Type + " was left unphotoed");
+            }
+        }
     }
 
     public void TakePhoto()
     {
+        print("Photo taken");
         Photo p = new Photo();
         string photoName = fm.PhotoCachePath + "Photo" + (PhotosInCache + 1) + ".png";
         ScreenCapture.CaptureScreenshot(photoName);
@@ -72,7 +83,8 @@ public class HeldCam : MonoBehaviour
                     continue;
                 }
                 p.targets.Add(target);
-
+                PhotoTarget.targetsInScene.Remove(target);
+                Destroy(p.targets[0].gameObject.GetComponent<PhotoTarget>());
                 p.positionOnScreen.Add(target, cam.WorldToScreenPoint(target.gameObject.transform.position));
             }
         }

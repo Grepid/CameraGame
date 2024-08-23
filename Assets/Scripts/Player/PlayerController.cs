@@ -57,6 +57,8 @@ public class PlayerController : MonoBehaviour
     private void CheckInputs()
     {
         if (Input.GetKeyDown(KeyCode.Space)) Jump();
+        if (Input.GetKeyDown(KeyCode.E)) Interact();
+        if (Input.GetKeyDown(KeyCode.L)) print(TargetManager.GetRandomFromTypes(new List<PhotoTargetType> {PhotoTargetType.Shiny, PhotoTargetType.Artifact, PhotoTargetType.MonsterDead }));
     }
     private void Jump()
     {
@@ -68,7 +70,8 @@ public class PlayerController : MonoBehaviour
     private void Move()
     {
         cc.Move(moveDirection * speed* Time.deltaTime);
-        if (isGrounded && velocity.y < 0) velocity = Physics.gravity.normalized * 2;
+
+        if (isGrounded && velocity.y < 0) velocity = Vector3.down * 2;
         else
         {
             velocity += Physics.gravity * Time.deltaTime;
