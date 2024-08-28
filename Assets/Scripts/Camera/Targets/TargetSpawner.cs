@@ -8,7 +8,9 @@ public class TargetSpawner : MonoBehaviour
 
     private void Start()
     {
-        Instantiate(TargetManager.GetRandomFromTypes(AllowedTypes), transform);
+        GameObject toSpawn = TargetManager.GetRandomFromTypes(AllowedTypes);
+        if (toSpawn == null) return;
+        Instantiate(toSpawn, transform);
     }
 
 }

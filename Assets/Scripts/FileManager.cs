@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Networking;
 
 public class FileManager : MonoBehaviour
 {
@@ -11,6 +12,15 @@ public class FileManager : MonoBehaviour
     public string PhotoCachePath { get; private set; }
     public string SavedPhotosPath { get; private set; }
     public string SaveDataPath { get; private set; }
+
+    public static int PhotosInCache
+    {
+        get
+        {
+            return Directory.GetFiles(instance.PhotoCachePath).Length;
+        }
+    }
+
 
     private void Awake()
     {
@@ -24,10 +34,14 @@ public class FileManager : MonoBehaviour
             Destroy(gameObject);
         }
         PPath = Application.persistentDataPath;
-        PhotoCachePath = PPath + "/Saves" + "/PhotoCache/";
-        SavedPhotosPath = PPath + "/Saves" + "/SavedPhotos/";
-        SaveDataPath = PPath + "/Saves" + "/SaveData/";
+        PhotoCachePath = PPath + "/Saves" + "/PhotoCache";
+        SavedPhotosPath = PPath + "/Saves" + "/SavedPhotos";
+        SaveDataPath = PPath + "/Saves" + "/SaveData";
         TryAccessDirectories();
+        /*UnityWebRequestTexture.GetTexture("");
+        var tex = DownloadHandlerTexture.GetContent(^);
+        MeshRenderer r = new MeshRenderer();
+        r.material.mainTexture = tex;*/
     }
     private void TryAccessDirectories()
     {

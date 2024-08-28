@@ -12,13 +12,6 @@ public class HeldCam : MonoBehaviour
     FileManager fm => FileManager.instance;
     GameObject obscureMatrix;
 
-    public int PhotosInCache
-    {
-        get
-        {
-            return Directory.GetFiles(fm.PhotoCachePath).Length;
-        }
-    }
     public Photo LastPhoto;
 
     public int PhotosLeft;
@@ -65,14 +58,19 @@ public class HeldCam : MonoBehaviour
 
     public void TakePhoto()
     {
+        if (PhotosLeft <= 0) return;
+        PhotosLeft--;
         print("Photo taken");
         Photo p = new Photo();
-        string photoName = fm.PhotoCachePath + "Photo" + (PhotosInCache + 1) + ".png";
+        string photoName = fm.PhotoCachePath + "/Photo" + (FileManager.PhotosInCache + 1) + ".png";
         ScreenCapture.CaptureScreenshot(photoName);
         p.photoPath = photoName;
         List<GameObject> InView = GetObjectsInView();
         foreach (GameObject go in InView)
         {
+            //Make a list of the visible ones
+            // Make this foreach the one that holds the targets and grabs all their stats
+            // make the outside of this loop run all the numbers and find the best one
             PhotoTarget target = go.GetComponent<PhotoTarget>();
             if (target != null)
             {
@@ -82,23 +80,22 @@ public class HeldCam : MonoBehaviour
                     print(target.info.Type + " was obscured");
                     continue;
                 }
-                p.targets.Add(target);
+                p.target = target;
                 PhotoTarget.targetsInScene.Remove(target);
-                Destroy(p.targets[0].gameObject.GetComponent<PhotoTarget>());
+                Destroy(target.gameObject.GetComponent<PhotoTarget>());
                 p.positionOnScreen.Add(target, cam.WorldToScreenPoint(target.gameObject.transform.position));
             }
         }
         LastPhoto = p;
     }
 
+
+
     public void GiveInfo(Photo photo)
     {
         if (LastPhoto == null) return;
-        foreach(var info in photo.targets)
-        {
-            print(info.info.Type + " " + info.info.weight);
-            print(photo.positionOnScreen[info]);
-        }
+        print(photo.target.info.Type + " " + photo.target.info.weight);
+        print(photo.positionOnScreen[photo.target]);
     }
     public Camera cam;
     public float maxDistance = 100f; // Max distance for detection
