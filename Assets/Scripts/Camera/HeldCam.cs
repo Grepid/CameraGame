@@ -176,7 +176,7 @@ public class HeldCam : MonoBehaviour
         foreach(Transform point in obscureMatrix.transform)
         {
             Ray ray = new Ray(cam.transform.position, point.position - cam.transform.position);
-            Debug.DrawRay(ray.origin, ray.direction*10, Color.red, 5f);
+            Debug.DrawRay(ray.origin, ray.direction*Vector3.Distance(cam.transform.position,point.position), Color.red, 5f);
             if(Physics.Raycast(ray,out RaycastHit hitInfo))
             {
                 //print(hitInfo.collider.gameObject.name);

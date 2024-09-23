@@ -39,6 +39,9 @@ public class TargetManager : MonoBehaviour
     }
     public static PhotoTarget GetRandomFromTypes(ICollection<PhotoTargetType> types)
     {
+        if (types == null) return null;
+        if (types.Count <= 0) return null;
+
         var filtered = GetTargetsOfType(types);
 
         int index = UnityEngine.Random.Range(0, filtered.Count);

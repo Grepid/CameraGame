@@ -34,6 +34,7 @@ public class PhotoDisplayer : MonoBehaviour
             yield break;
         }
         var tex = DownloadHandlerTexture.GetContent(req);
+        tex.filterMode = FilterMode.Trilinear;
         MeshRenderer r = gameObject.GetComponent<MeshRenderer>();
         r.material.mainTexture = tex;
     }

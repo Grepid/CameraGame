@@ -10,7 +10,9 @@ public interface Iinteractable
 
 public class PlayerController : MonoBehaviour
 {
-    private bool acceptingInputs;
+    public static PlayerController instance;
+
+    public bool acceptingInputs;
     private CharacterController cc;
     private Camera cam;
     Vector2 moveInput;
@@ -35,11 +37,11 @@ public class PlayerController : MonoBehaviour
     {
         Physics.gravity *= 2;
         cc = GetComponent<CharacterController>();
+        instance = this;
     }
     private void Start()
     {
-        Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        ToggleMouse();
         cam = Camera.main;
         groundCheck = transform.Find("GroundCheckLocation");
     }
@@ -60,6 +62,19 @@ public class PlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.E)) Interact();
         if (Input.GetKeyDown(KeyCode.L)) print(TargetManager.GetRandomFromTypes(new List<PhotoTargetType> {PhotoTargetType.Shiny, PhotoTargetType.Artifact, PhotoTargetType.MonsterDead }));
     }
+
+    public void ToggleMouse()
+    {
+        Cursor.visible = !Cursor.visible;
+        Cursor.lockState = Cursor.lockState == CursorLockMode.Locked? CursorLockMode.Confined : CursorLockMode.Locked;
+    }
+
+    public void UIModeToggle()
+    {
+        ToggleMouse();
+        acceptingInputs = !acceptingInputs;
+    }
+
     private void Jump()
     {
         if (isGrounded)
@@ -75,8 +90,8 @@ public class PlayerController : MonoBehaviour
         else
         {
             velocity += Physics.gravity * Time.deltaTime;
-            cc.Move(velocity * Time.deltaTime);
         }
+        cc.Move(velocity * Time.deltaTime);
     }
     private void Rotate()
     {

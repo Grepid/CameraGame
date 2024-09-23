@@ -11,10 +11,8 @@ GameObject:
   - component: {fileID: 3508291846755323808}
   - component: {fileID: 1548865741475768456}
   - component: {fileID: 3705874406348734959}
-  - component: {fileID: 2157715263886651297}
-  - component: {fileID: 8056870994765811330}
   m_Layer: 0
-  m_Name: SpawnPoint
+  m_Name: SubPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -63,7 +61,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 2e9a5dac10a758841adb60a5eab0ca3d, type: 2}
+  - {fileID: 2100000, guid: 5f3d585900b5cff47ad16761a4009cb3, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -85,32 +83,3 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!114 &2157715263886651297
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8488794493296644965}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 62b3cd486e9325a458a23783be0464a2, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  AllowedTypes: 
-  SpawnPointCount: 0
-  pointPrefab: {fileID: 8488794493296644965, guid: 9bbc475937dfe884881670d325e7ff1c,
-    type: 3}
---- !u!114 &8056870994765811330
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8488794493296644965}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bf25548c873fc514ca0b17a7a8467e09, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  Recurssive: 1

@@ -4,6 +4,7 @@ using UnityEngine;
 
 
 public enum PhotoTargetType{Trap,MonsterAlive,MonsterDead,Artifact,Shiny}
+public enum PhotoTargetSize {ReallySmall,Small,Medium,Large,VeryLarge,UltraLarge}
 
 [System.Serializable]
 public class PhotoTargetInfo
